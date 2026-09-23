@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient as createAdminClient } from '@supabase/supabase-js';
 import { createClient } from '@/utils/supabase/server';
 
+
 // Borra la cuenta del usuario autenticado: primero su perfil y luego el usuario de Auth.
 // Requiere SUPABASE_SERVICE_ROLE_KEY en el entorno del servidor (nunca con prefijo NEXT_PUBLIC_).
 export async function DELETE() {

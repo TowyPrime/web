@@ -20,7 +20,7 @@ interface StoryCardProps {
 export default function StoryCard({
   title,
   content,
-  authorName = 'Onda Radio',
+  authorName = 'Con el pie derecho radio',
   authorAvatar,
   authorRole = 'Admin',
   fechaCreacion = 'Ahora mismo',
