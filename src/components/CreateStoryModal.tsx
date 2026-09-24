@@ -34,7 +34,7 @@ export default function CreateStoryModal({
     }
 
     setLoading(true);
-    setError(null);
+    setError(null);//
 
     try {
       // Insertamos la historia en la tabla 'stories'

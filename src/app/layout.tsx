@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import { AudioProvider } from '@/context/AudioContext';
 import { VisitorProvider } from '@/context/VisitorContext';
 import GlobalPlayer from '@/components/GlobalPlayer';
+import { VisitorNicknameDialog } from '@/components/VisitorNicknameDialog';
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import './globals.css';
@@ -68,6 +69,7 @@ export default async function RootLayout({
 
             {/* Renderiza el contenido de la página directamente sin restricciones de contenedor global */}
             {children}
+          <VisitorNicknameDialog />
           </VisitorProvider>
         </AudioProvider>
       </body>

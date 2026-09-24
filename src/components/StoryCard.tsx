@@ -1,9 +1,9 @@
-'use client';
-
-import { useState } from 'react';
-import Image from 'next/image';
-import { Heart, MessageCircle, Send } from 'lucide-react';
-import type { DemoComment } from '@/data/demo';
+"use client";
+import { useVisitor } from "@/context/VisitorContext";
+import { useState } from "react";
+import Image from "next/image";
+import { Heart, MessageCircle, Send } from "lucide-react";
+import type { DemoComment } from "@/data/demo";
 
 interface StoryCardProps {
   title: string;
@@ -20,32 +20,46 @@ interface StoryCardProps {
 export default function StoryCard({
   title,
   content,
-  authorName = 'Con el pie derecho radio',
+  authorName = "Con el pie derecho radio",
   authorAvatar,
-  authorRole = 'Admin',
-  fechaCreacion = 'Ahora mismo',
-  categoria = 'CRÓNICA',
+  authorRole = "Admin",
+  fechaCreacion = "Ahora mismo",
+  categoria = "CRÓNICA",
   likesCount = 0,
   initialComments = [],
 }: StoryCardProps) {
   const [liked, setLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const { requireVisitor } = useVisitor();
   const [comments, setComments] = useState<DemoComment[]>(initialComments);
-  const [draft, setDraft] = useState('');
+  const [draft, setDraft] = useState("");
 
   const likes = likesCount + (liked ? 1 : 0);
 
-  const addComment = (e: React.FormEvent) => {
+  const addComment = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = draft.trim();
+
     if (!text) return;
-    setComments((prev) => [...prev, { author: 'Tú', text, when: 'ahora' }]);
-    setDraft('');
+
+    const listo = await requireVisitor();
+    
+    if (!listo) return;
+
+    setComments((prev) => [...prev, { author: "Tú", text, when: "ahora" }]);
+    setDraft("");
+  };
+
+  const handleLike = async () => {
+    const listo = await requireVisitor();
+
+    if (!listo) return;
+
+    setLiked((v) => !v);
   };
 
   return (
     <article className="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden text-slate-100 max-w-3xl mx-auto w-full transition-all">
-
       {/* Cabecera: Avatar, Autor, Rol, Fecha y Etiqueta */}
       <div className="p-6 pb-4 flex items-center justify-between border-b border-slate-800/60">
         <div className="flex items-center gap-3">
@@ -64,7 +78,9 @@ export default function StoryCard({
           )}
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-white text-sm md:text-base">{authorName}</span>
+              <span className="font-semibold text-white text-sm md:text-base">
+                {authorName}
+              </span>
               {authorRole && (
                 <span className="bg-red-600/20 text-red-400 border border-red-500/30 text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">
                   {authorRole}
@@ -84,7 +100,9 @@ export default function StoryCard({
 
       {/* Contenido / Cuerpo de la historia */}
       <div className="p-6 space-y-4">
-        <h2 className="text-2xl font-bold text-white tracking-tight">{title}</h2>
+        <h2 className="text-2xl font-bold text-white tracking-tight">
+          {title}
+        </h2>
         <div className="text-slate-300 text-sm md:text-base leading-relaxed space-y-3 whitespace-pre-line">
           {content}
         </div>
@@ -109,13 +127,15 @@ export default function StoryCard({
       <div className="border-t border-slate-800 grid grid-cols-2 text-center text-sm font-medium text-slate-300 bg-slate-900/50">
         <button
           type="button"
-          onClick={() => setLiked((v) => !v)}
+          onClick={handleLike}
           aria-pressed={liked}
           className={`flex items-center justify-center gap-2 py-3 hover:bg-slate-800/80 transition-colors cursor-pointer border-r border-slate-800 ${
-            liked ? 'text-red-400' : 'hover:text-white'
+            liked ? "text-red-400" : "hover:text-white"
           }`}
         >
-          <Heart className={`w-4 h-4 ${liked ? 'fill-red-500 text-red-500' : ''}`} />
+          <Heart
+            className={`w-4 h-4 ${liked ? "fill-red-500 text-red-500" : ""}`}
+          />
           <span>Me gusta</span>
         </button>
         <button
@@ -141,7 +161,9 @@ export default function StoryCard({
               </div>
               <div className="bg-slate-800/60 rounded-2xl px-4 py-2">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-sm font-semibold text-white">{c.author}</span>
+                  <span className="text-sm font-semibold text-white">
+                    {c.author}
+                  </span>
                   <span className="text-[11px] text-slate-500">{c.when}</span>
                 </div>
                 <p className="text-sm text-slate-300">{c.text}</p>
@@ -166,7 +188,6 @@ export default function StoryCard({
           </form>
         </div>
       )}
-
     </article>
   );
 }

@@ -66,7 +66,7 @@ export default async function Home() {
                 year: 'numeric',
               })}
               categoria={story.categoria}
-              authorName="Onda Radio"
+              authorName="Con el pie derecho radio"
               authorRole="Admin"
               likesCount={story.likes}
               initialComments={story.comments}

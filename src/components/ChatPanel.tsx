@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Send, Users } from 'lucide-react';
 import { demoChat, type DemoChatMessage } from '@/data/demo';
+import { useVisitor } from "@/context/VisitorContext";
 
 interface ChatPanelProps {
   className?: string;
@@ -12,6 +13,7 @@ export default function ChatPanel({ className = '' }: ChatPanelProps) {
   const [messages, setMessages] = useState<DemoChatMessage[]>(demoChat);
   const [draft, setDraft] = useState('');
   const listRef = useRef<HTMLDivElement>(null);
+  const {requireVisitor} = useVisitor();
 
   // Desplaza solo la caja del chat (scrollIntoView movería también toda la página)
   useEffect(() => {
@@ -19,10 +21,15 @@ export default function ChatPanel({ className = '' }: ChatPanelProps) {
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
-  const send = (e: React.FormEvent) => {
+  const send = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = draft.trim();
     if (!text) return;
+
+    const listo = await requireVisitor();
+
+    if(!listo) return;
+    
     const time = new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
     setMessages((prev) => [...prev, { id: prev.length + 1, author: 'Tú', text, time, mine: true }]);
     setDraft('');
